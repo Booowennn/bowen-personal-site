@@ -705,8 +705,8 @@ article.job {
   gap: 0.35rem 1.25rem;
   align-items: baseline;
   margin-bottom: 1rem;
-  padding-bottom: 0.9rem;
-  border-bottom: 1px solid var(--line);
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .job-head h3 {
@@ -943,9 +943,6 @@ footer.site p { margin: 0; }
   border-radius: 0;
   padding: 1.2rem 1.3rem;
 }
-.edu-item + .edu-item {
-  border-top: 1px solid var(--line);
-}
 .edu-dates {
   font-family: var(--mono);
   font-size: 0.8rem;
@@ -1005,15 +1002,6 @@ footer.site p { margin: 0; }
 .job-head h3,
 .job-meta {
   min-width: 0;
-}
-.job-head::after {
-  content: "";
-  grid-column: 1 / -1;
-  display: block;
-  height: 1px;
-  margin-top: 0.85rem;
-  background: var(--line);
-  pointer-events: none;
 }
 .job-meta {
   margin: 0;
