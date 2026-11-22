@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="杨博文（Bowen Yang），从事 SoC 芯片架构，聚焦 GPU、CPU 与 AI 相关芯片的架构、能效与端到端交付。">
+  <title>杨博文 · SoC 芯片架构</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='3' fill='none' stroke='%23c9a66b' stroke-width='1.5'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-size='16' font-family='system-ui,sans-serif' fill='%23c9a66b'%3E%E6%9D%A8%3C/text%3E%3C/svg%3E">
+  <style>
+
+:root {
+  --bg: #0c0d0f;
+  --bg-elev: #14161a;
+  --bg-soft: #1b1e24;
+  --ink: #f2eee6;
+  --ink-muted: #9a958c;
+  --ink-faint: #6d6a64;
+  --line: rgba(242, 238, 230, 0.10);
+  --line-strong: rgba(242, 238, 230, 0.18);
+  --accent: #c9a66b;
+  --accent-ink: #0c0d0f;
+  --accent-dim: rgba(201, 166, 107, 0.14);
+  --accent-glow: rgba(201, 166, 107, 0.28);
+  --steel: #8aa0ab;
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  --header-h: 4.25rem;
+  --radius: 14px;
+  --font: "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans SC",
+          "Microsoft YaHei UI", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  --mono: "SF Mono", "JetBrains Mono", "Cascadia Code", "Sarasa Mono SC", ui-monospace, monospace;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  html:not([data-theme]) {
+    --bg: #f3f0ea;
+    --bg-elev: #fffcf7;
+    --bg-soft: #eae5db;
+    --ink: #1b1916;
+    --ink-muted: #5c5850;
+    --ink-faint: #8a857c;
+    --line: rgba(27, 25, 22, 0.10);
+    --line-strong: rgba(27, 25, 22, 0.16);
+    --accent: #7a5a2c;
+    --accent-ink: #fffcf7;
+    --accent-dim: rgba(122, 90, 44, 0.12);
+    --accent-glow: rgba(122, 90, 44, 0.22);
+    --steel: #4f6670;
+    --shadow: 0 20px 50px rgba(27, 25, 22, 0.08);
+    color-scheme: light;
+  }
+}
+
+html[data-theme="light"] {
+  --bg: #f3f0ea;
+  --bg-elev: #fffcf7;
+  --bg-soft: #eae5db;
+  --ink: #1b1916;
+  --ink-muted: #5c5850;
+  --ink-faint: #8a857c;
+  --line: rgba(27, 25, 22, 0.10);
+  --line-strong: rgba(27, 25, 22, 0.16);
+  --accent: #7a5a2c;
+  --accent-ink: #fffcf7;
+  --accent-dim: rgba(122, 90, 44, 0.12);
+  --accent-glow: rgba(122, 90, 44, 0.22);
+  --steel: #4f6670;
+  --shadow: 0 20px 50px rgba(27, 25, 22, 0.08);
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  --bg: #0c0d0f;
+  --bg-elev: #14161a;
+  --bg-soft: #1b1e24;
+  --ink: #f2eee6;
+  --ink-muted: #9a958c;
+  --ink-faint: #6d6a64;
+  --line: rgba(242, 238, 230, 0.10);
+  --line-strong: rgba(242, 238, 230, 0.18);
+  --accent: #c9a66b;
+  --accent-ink: #0c0d0f;
+  --accent-dim: rgba(201, 166, 107, 0.14);
+  --accent-glow: rgba(201, 166, 107, 0.28);
+  --steel: #8aa0ab;
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[hidden] { display: none !important; }
+
+img, svg { max-width: 100%; }
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+
+a:hover { text-decoration-thickness: 2px; }
+
+:focus { outline: none; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.skip {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.5rem 0.8rem;
+  background: var(--accent);
+  color: var(--accent-ink);
+  text-decoration: none;
+  border-radius: 6px;
+}
+.skip:focus { top: 0.75rem; }
+
+.wrap {
+  width: min(1120px, calc(100% - 2.5rem));
+  margin-inline: auto;
+}
+
+header.site {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border-bottom: 1px solid var(--line);
+}
+
+header.site .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: min(1120px, calc(100% - 2.5rem));
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: inherit;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.brand:hover { text-decoration: none; }
+
+.mark {
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--accent);
+  border-radius: 5px;
+  color: var(--accent);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.brand-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.brand-role {
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.08em;
+}
+
+nav.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+nav.site-nav a {
+  color: var(--ink-muted);
+  text-decoration: none;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.875rem;
+  border-radius: 999px;
+  position: relative;
+}
+
+nav.site-nav a:hover {
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--accent-dim);
+}
+
+nav.site-nav a[aria-current="page"] {
+  color: var(--ink);
+}
+
+nav.site-nav a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 0.7rem;
+  right: 0.7rem;
+  bottom: 0.2rem;
+  height: 1px;
+  background: var(--accent);
+}
+
+.theme-toggle {
+  appearance: none;
+  margin-left: 0.35rem;
+  width: 2.35rem;
+  height: 2.35rem;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-elev);
+  color: var(--ink);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.theme-toggle svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.theme-toggle .icon-sun { display: none; }
+.theme-toggle .icon-moon { display: block; }
+
+@media (prefers-color-scheme: light) {
+  html:not([data-theme]) .theme-toggle .icon-sun { display: block; }
+  html:not([data-theme]) .theme-toggle .icon-moon { display: none; }
+}
+html[data-theme="light"] .theme-toggle .icon-sun { display: block; }
+html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+html[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+html[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+main { flex: 1; }
+
+/* Views: without JS, both stack. With JS, switch.
+   #home must remain display:grid (its .hero layout). */
+body.js-ready .view { display: none; }
+body.js-ready[data-view="home"] #home { display: grid; }
+body.js-ready[data-view="about"] #about { display: block; }
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(240px, 0.85fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: start;
+  min-height: calc(100svh - var(--header-h) - 5.25rem);
+  padding-block: clamp(1.4rem, 3.5vh, 3.25rem);
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--accent);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin: 0 0 0.9rem;
+}
+
+.eyebrow::after {
+  content: "";
+  width: 3rem;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0.7;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2.6rem, 6.2vw, 4.6rem);
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  line-height: 1.05;
+}
+
+.en-name {
+  margin: 0.55rem 0 0;
+  font-size: 0.92rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+.role {
+  margin: 1.1rem 0 0;
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  font-weight: 500;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.role::before {
+  content: "";
+  width: 1.25rem;
+  height: 1px;
+  background: var(--accent);
+  flex: none;
+}
+
+.lead {
+  margin: 1.15rem 0 0;
+  max-width: 38rem;
+  color: var(--ink-muted);
+  font-size: 1.02rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tags li {
+  border: 1px solid var(--line-strong);
+  background: var(--accent-dim);
+  color: var(--ink);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem 2rem;
+  margin: 1.6rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  max-width: 40rem;
+}
+
+.meta-grid h2 {
+  margin: 0 0 0.35rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.meta-grid p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--ink-muted);
+  line-height: 1.65;
+}
+
+.meta-grid strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.hero-actions {
+  margin-top: 1.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.btn:hover {
+  text-decoration: none;
+  filter: brightness(1.06);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line-strong);
+  margin-left: 0.5rem;
+}
+
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  filter: none;
+}
+
+.btn .arrow {
+  width: 0.95rem;
+  height: 0.95rem;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hero-visual {
+  position: sticky;
+  top: calc(var(--header-h) + 0.5rem);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  padding-top: 0.2rem;
+  align-self: start;
+}
+
+.die-frame {
+  width: min(100%, 420px);
+  aspect-ratio: 1;
+  opacity: 1;
+}
+
+.die-svg { width: 100%; height: 100%; display: block; }
+
+.die-svg .pads { fill: var(--accent); opacity: 0.7; }
+.die-svg .die-outline {
+  fill: color-mix(in srgb, var(--bg-elev) 80%, transparent);
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  opacity: 0.85;
+}
+.die-svg .die-notch {
+  fill: var(--bg);
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  opacity: 0.85;
+}
+.die-svg .die-inner { opacity: 0.35; }
+.die-svg .grid { stroke: var(--steel); }
+.die-svg .ip {
+  fill: color-mix(in srgb, var(--bg) 40%, transparent);
+  stroke: var(--steel);
+  stroke-width: 1.1;
+  opacity: 0.85;
+}
+.die-svg .trace {
+  stroke: var(--accent);
+  stroke-width: 1.15;
+  opacity: 0.72;
+}
+.die-svg .via {
+  fill: var(--bg);
+  stroke: var(--accent);
+  stroke-width: 1;
+  opacity: 0.8;
+}
+.die-svg .pulse {
+  stroke: var(--accent);
+  stroke-width: 1.4;
+  opacity: 0;
+  stroke-dasharray: 24 220;
+  stroke-linecap: square;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .die-svg .pulse {
+    animation: pulse-trace 6.5s linear infinite;
+    opacity: 0.8;
+  }
+}
+
+@keyframes pulse-trace {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -244; }
+}
+
+/* About */
+.about-page {
+  padding-block: clamp(2rem, 5vh, 3.5rem) 4rem;
+}
+
+.kicker {
+  margin: 0 0 0.6rem;
+  color: var(--accent);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.about-page > .intro h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4.5vw, 2.8rem);
+  letter-spacing: 0.08em;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.2rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc a {
+  color: var(--ink-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+}
+
+.toc a:hover {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.intro-body {
+  margin: 1.75rem 0 0;
+  max-width: 46rem;
+}
+
+.intro-body p {
+  margin: 0 0 1rem;
+  color: var(--ink-muted);
+}
+
+.intro-body p:last-child { margin-bottom: 0; }
+
+section.block, #intro {
+  scroll-margin-top: calc(var(--header-h) + 0.8rem);
+}
+article.job {
+  scroll-margin-top: calc(var(--header-h) + 0.8rem);
+}
+section.block {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+}
+
+.block-lead {
+  margin: -0.4rem 0 1.25rem;
+  max-width: 46rem;
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+}
+section.block > h2 {
+  margin: 0 0 1.4rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+.caps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.cap {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.3rem 1.15rem;
+}
+
+.cap h3 {
+  margin: 0 0 0.85rem;
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.cap h3::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border: 1px solid var(--accent);
+  transform: rotate(45deg);
+  flex: none;
+}
+
+.cap ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cap li {
+  position: relative;
+  padding: 0.28rem 0 0.28rem 1rem;
+  color: var(--ink-muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.cap li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.85em;
+  width: 0.4rem;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0.8;
+}
+
+.jobs { display: grid; gap: 1.25rem; }
+
+article.job {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.45rem 1.5rem 1.35rem;
+  border-left: 2px solid var(--accent);
+}
+
+.job-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem 1.25rem;
+  align-items: baseline;
+  margin-bottom: 1rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.job-head h3 {
+  margin: 0;
+  font-size: 1.12rem;
+  letter-spacing: 0.02em;
+  font-weight: 650;
+}
+
+.job-role {
+  margin: 0.25rem 0 0;
+  color: var(--ink-muted);
+  font-size: 0.92rem;
+}
+
+.job-dates {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.project {
+  margin: 0.2rem 0 0.85rem;
+}
+
+.project:last-child { margin-bottom: 0; }
+
+.project > h4 {
+  margin: 0 0 0.65rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+.duty {
+  margin: 0 0 0.85rem;
+}
+
+.duty:last-child { margin-bottom: 0; }
+
+.duty-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.duty ul, .project > ul {
+  margin: 0.4rem 0 0;
+  padding: 0 0 0 1.1rem;
+}
+
+.duty li, .project > ul li {
+  margin: 0.25rem 0;
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+  padding-left: 0.15rem;
+}
+
+.duty li::marker, .project > ul li::marker {
+  color: var(--accent);
+}
+
+.schools {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.school {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.3rem;
+}
+
+.school h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+
+.school .degree {
+  margin: 0.3rem 0 0;
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+
+.school .dates {
+  margin: 0.55rem 0 0;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+}
+
+abbr[title] {
+  text-decoration: none;
+  cursor: help;
+  font-style: normal;
+  border-bottom: 1px dotted transparent;
+}
+abbr[title]:hover,
+abbr[title]:focus {
+  border-bottom-color: color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+footer.site {
+  border-top: 1px solid var(--line);
+  padding: 1.35rem 0 1.6rem;
+  color: var(--ink-faint);
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
+footer.site .wrap {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  flex-wrap: wrap;
+}
+
+footer.site p { margin: 0; }
+
+/* No entrance fade: first paint stays visible. */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Responsive */
+@media (max-width: 880px) {
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding-block: 2rem 2.5rem;
+  }
+  /* 窄屏优先阅读姓名与简介，芯片装饰仅保留在桌面名片。 */
+  .hero-visual { display: none; }
+  .caps, .schools, .meta-grid {
+    grid-template-columns: 1fr;
+  }
+  .job-head {
+    grid-template-columns: 1fr;
+  }
+  .job-dates { text-align: left; }
+}
+
+@media (max-width: 640px) {
+  :root { --header-h: 3.75rem; }
+  .wrap, header.site .wrap { width: min(1120px, calc(100% - 1.5rem)); }
+  .brand-text { display: none; }
+  nav.site-nav a { padding-inline: 0.5rem; }
+  .hero h1 { letter-spacing: 0.04em; }
+  .btn, .btn-ghost { margin: 0.25rem 0.4rem 0 0; }
+  .hero-actions { display: flex; flex-wrap: wrap; }
+  article.job, .cap, .school { padding: 1.1rem 1rem; }
+}
+
+@media print {
+  header.site, .theme-toggle, .hero-visual, .hero-actions, .skip, .toc { display: none !important; }
+  body, body.js-ready .view, body.js-ready[data-view="home"] #home,
+  body.js-ready[data-view="about"] #about {
+    display: block !important;
+    animation: none !important;
+    background: #fff !important;
+    color: #111 !important;
+  }
+  .hero { min-height: 0; display: block; }
+  article.job, .cap, .school { break-inside: avoid; box-shadow: none; }
+  a { color: inherit; text-decoration: none; }
+}
+
+  :root { --header-h: 0rem; }
+  </style>
+  <script>
+
+(function () {
+  try {
+    var t = localStorage.getItem("bowen-site-theme");
+    if (t === "light" || t === "dark") {
+      document.documentElement.setAttribute("data-theme", t);
+    }
+  } catch (e) {}
+})();
+
+  </script>
+</head>
+<body data-view="home">
+  <a class="skip" href="#main">跳到主要内容</a>
+
+
+  <main id="main">
+    <section id="home" class="view wrap hero" aria-label="名片">
+      <div class="hero-copy">
+        <h1>杨博文</h1>
+        <p class="role">达摩院 芯片架构</p>
+        <div class="hero-actions">
+          <a class="btn" href="#about">关于我
+            <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="die-frame">
+<svg class="die-svg" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="die-grid" width="16" height="16" patternUnits="userSpaceOnUse">
+      <path class="grid" d="M 16 0 L 0 0 0 16" fill="none" stroke-width="0.6"/>
+    </pattern>
+  </defs>
+  <g class="pads">
+    <rect x="64.0" y="33" width="8" height="14" rx="1"/><rect x="64.0" y="473" width="8" height="14" rx="1"/><rect x="80.0" y="33" width="8" height="14" rx="1"/><rect x="80.0" y="473" width="8" height="14" rx="1"/><rect x="96.0" y="33" width="8" height="14" rx="1"/><rect x="96.0" y="473" width="8" height="14" rx="1"/><rect x="112.0" y="33" width="8" height="14" rx="1"/><rect x="112.0" y="473" width="8" height="14" rx="1"/><rect x="128.0" y="33" width="8" height="14" rx="1"/><rect x="128.0" y="473" width="8" height="14" rx="1"/><rect x="144.0" y="33" width="8" height="14" rx="1"/><rect x="144.0" y="473" width="8" height="14" rx="1"/><rect x="160.0" y="33" width="8" height="14" rx="1"/><rect x="160.0" y="473" width="8" height="14" rx="1"/><rect x="176.0" y="33" width="8" height="14" rx="1"/><rect x="176.0" y="473" width="8" height="14" rx="1"/><rect x="192.0" y="33" width="8" height="14" rx="1"/><rect x="192.0" y="473" width="8" height="14" rx="1"/><rect x="208.0" y="33" width="8" height="14" rx="1"/><rect x="208.0" y="473" width="8" height="14" rx="1"/><rect x="224.0" y="33" width="8" height="14" rx="1"/><rect x="224.0" y="473" width="8" height="14" rx="1"/><rect x="240.0" y="33" width="8" height="14" rx="1"/><rect x="240.0" y="473" width="8" height="14" rx="1"/><rect x="256.0" y="33" width="8" height="14" rx="1"/><rect x="256.0" y="473" width="8" height="14" rx="1"/><rect x="272.0" y="33" width="8" height="14" rx="1"/><rect x="272.0" y="473" width="8" height="14" rx="1"/><rect x="288.0" y="33" width="8" height="14" rx="1"/><rect x="288.0" y="473" width="8" height="14" rx="1"/><rect x="304.0" y="33" width="8" height="14" rx="1"/><rect x="304.0" y="473" width="8" height="14" rx="1"/><rect x="320.0" y="33" width="8" height="14" rx="1"/><rect x="320.0" y="473" width="8" height="14" rx="1"/><rect x="336.0" y="33" width="8" height="14" rx="1"/><rect x="336.0" y="473" width="8" height="14" rx="1"/><rect x="352.0" y="33" width="8" height="14" rx="1"/><rect x="352.0" y="473" width="8" height="14" rx="1"/><rect x="368.0" y="33" width="8" height="14" rx="1"/><rect x="368.0" y="473" width="8" height="14" rx="1"/><rect x="384.0" y="33" width="8" height="14" rx="1"/><rect x="384.0" y="473" width="8" height="14" rx="1"/><rect x="400.0" y="33" width="8" height="14" rx="1"/><rect x="400.0" y="473" width="8" height="14" rx="1"/><rect x="416.0" y="33" width="8" height="14" rx="1"/><rect x="416.0" y="473" width="8" height="14" rx="1"/><rect x="432.0" y="33" width="8" height="14" rx="1"/><rect x="432.0" y="473" width="8" height="14" rx="1"/><rect x="448.0" y="33" width="8" height="14" rx="1"/><rect x="448.0" y="473" width="8" height="14" rx="1"/><rect x="33" y="64.0" width="14" height="8" rx="1"/><rect x="473" y="64.0" width="14" height="8" rx="1"/><rect x="33" y="80.0" width="14" height="8" rx="1"/><rect x="473" y="80.0" width="14" height="8" rx="1"/><rect x="33" y="96.0" width="14" height="8" rx="1"/><rect x="473" y="96.0" width="14" height="8" rx="1"/><rect x="33" y="112.0" width="14" height="8" rx="1"/><rect x="473" y="112.0" width="14" height="8" rx="1"/><rect x="33" y="128.0" width="14" height="8" rx="1"/><rect x="473" y="128.0" width="14" height="8" rx="1"/><rect x="33" y="144.0" width="14" height="8" rx="1"/><rect x="473" y="144.0" width="14" height="8" rx="1"/><rect x="33" y="160.0" width="14" height="8" rx="1"/><rect x="473" y="160.0" width="14" height="8" rx="1"/><rect x="33" y="176.0" width="14" height="8" rx="1"/><rect x="473" y="176.0" width="14" height="8" rx="1"/><rect x="33" y="192.0" width="14" height="8" rx="1"/><rect x="473" y="192.0" width="14" height="8" rx="1"/><rect x="33" y="208.0" width="14" height="8" rx="1"/><rect x="473" y="208.0" width="14" height="8" rx="1"/><rect x="33" y="224.0" width="14" height="8" rx="1"/><rect x="473" y="224.0" width="14" height="8" rx="1"/><rect x="33" y="240.0" width="14" height="8" rx="1"/><rect x="473" y="240.0" width="14" height="8" rx="1"/><rect x="33" y="256.0" width="14" height="8" rx="1"/><rect x="473" y="256.0" width="14" height="8" rx="1"/><rect x="33" y="272.0" width="14" height="8" rx="1"/><rect x="473" y="272.0" width="14" height="8" rx="1"/><rect x="33" y="288.0" width="14" height="8" rx="1"/><rect x="473" y="288.0" width="14" height="8" rx="1"/><rect x="33" y="304.0" width="14" height="8" rx="1"/><rect x="473" y="304.0" width="14" height="8" rx="1"/><rect x="33" y="320.0" width="14" height="8" rx="1"/><rect x="473" y="320.0" width="14" height="8" rx="1"/><rect x="33" y="336.0" width="14" height="8" rx="1"/><rect x="473" y="336.0" width="14" height="8" rx="1"/><rect x="33" y="352.0" width="14" height="8" rx="1"/><rect x="473" y="352.0" width="14" height="8" rx="1"/><rect x="33" y="368.0" width="14" height="8" rx="1"/><rect x="473" y="368.0" width="14" height="8" rx="1"/><rect x="33" y="384.0" width="14" height="8" rx="1"/><rect x="473" y="384.0" width="14" height="8" rx="1"/><rect x="33" y="400.0" width="14" height="8" rx="1"/><rect x="473" y="400.0" width="14" height="8" rx="1"/><rect x="33" y="416.0" width="14" height="8" rx="1"/><rect x="473" y="416.0" width="14" height="8" rx="1"/><rect x="33" y="432.0" width="14" height="8" rx="1"/><rect x="473" y="432.0" width="14" height="8" rx="1"/><rect x="33" y="448.0" width="14" height="8" rx="1"/><rect x="473" y="448.0" width="14" height="8" rx="1"/>
+  </g>
+  <rect class="die-outline" x="44" y="44" width="432" height="432" rx="10"/>
+  <rect class="die-notch" x="454" y="44" width="22" height="22" rx="2"/>
+  <rect class="die-inner" x="60" y="60" width="400" height="400" fill="url(#die-grid)" rx="4"/>
+  <rect class="ip" x="80" y="88" width="100" height="72" rx="4"/>
+    <rect class="ip" x="196" y="88" width="128" height="72" rx="4"/>
+    <rect class="ip" x="340" y="88" width="100" height="72" rx="4"/>
+    <rect class="ip" x="80" y="180" width="100" height="88" rx="4"/>
+    <rect class="ip" x="196" y="180" width="128" height="88" rx="4"/>
+    <rect class="ip" x="340" y="180" width="100" height="88" rx="4"/>
+    <rect class="ip" x="80" y="288" width="160" height="70" rx="4"/>
+    <rect class="ip" x="256" y="288" width="84" height="70" rx="4"/>
+    <rect class="ip" x="356" y="288" width="84" height="70" rx="4"/>
+    <rect class="ip" x="80" y="376" width="360" height="56" rx="4"/>
+  <path class="trace" d="M 130 224 H 390 M 130 168 V 224 M 260 124 V 224 M 390 168 V 224 M 160 224 V 323 M 298 224 V 323 M 398 224 V 323 M 160 323 H 398 M 260 323 V 404 M 80 404 H 440 M 130 124 H 196 M 324 124 H 340 M 180 323 V 376 M 356 358 V 404" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path class="pulse" d="M 130 124 H 196 H 260 V 224 H 390 V 323 H 298 V 404" fill="none"/>
+  <circle class="via" cx="130" cy="168" r="2.4"/>
+    <circle class="via" cx="260" cy="124" r="2.4"/>
+    <circle class="via" cx="390" cy="168" r="2.4"/>
+    <circle class="via" cx="130" cy="224" r="2.4"/>
+    <circle class="via" cx="260" cy="224" r="2.4"/>
+    <circle class="via" cx="390" cy="224" r="2.4"/>
+    <circle class="via" cx="160" cy="323" r="2.4"/>
+    <circle class="via" cx="298" cy="323" r="2.4"/>
+    <circle class="via" cx="398" cy="323" r="2.4"/>
+    <circle class="via" cx="260" cy="404" r="2.4"/>
+    <circle class="via" cx="180" cy="376" r="2.4"/>
+    <circle class="via" cx="356" cy="404" r="2.4"/>
+    <circle class="via" cx="130" cy="124" r="2.4"/>
+    <circle class="via" cx="324" cy="124" r="2.4"/>
+</svg>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="view about-page wrap" aria-label="关于我">
+      <div class="intro" id="intro">
+        <p class="kicker">About</p>
+        <h1>关于我</h1>
+        <ul class="toc">
+          <li><a href="#intro">简介</a></li>
+          <li><a href="#focus">专业方向</a></li>
+          <li><a href="#experience">工作经历</a></li>
+          <li><a href="#education">教育背景</a></li>
+        </ul>
+        <div class="intro-body">
+          <p>聚焦 GPU、CPU、AI 相关 SoC 芯片架构，覆盖 die-to-die、chip-to-chip、scale-up / scale-out、系统控制，以及 3D AI 架构、推理模型能效优化与集群部署。</p>
+          <p>管理芯片开发全流程，负责端到端交付，范围涵盖产品规划、芯片架构、设计、验证、物理实现、封装与 <abbr title="印刷电路板（Printed Circuit Board）">PCB</abbr>。</p>
+          <p>聚焦能效相关领域的技术规划、先进技术、<abbr title="电子设计自动化（Electronic Design Automation）">EDA</abbr> 演进与签核（sign-off）流程。</p>
+          <p>推动 AI Native 转型，提升架构探索、<abbr title="性能、功耗与面积（Performance, Power, Area）">PPA</abbr> 分析和跨领域 <abbr title="设计-工艺协同优化（Design-Technology Co-Optimization）">DTCO</abbr> 优化效率。</p>
+        </div>
+      </div>
+
+      <section class="block" id="focus" aria-labelledby="focus-title">
+        <h2 id="focus-title">专业方向</h2>
+        <p class="block-lead">以下方向整理自履历所载工作，用于概括长期关注的问题，并不表示每一项都出现在同一项目中。</p>
+        <div class="caps">
+          <article class="cap">
+            <h3>系统与 SoC 架构</h3>
+            <ul>
+              <li>GPU、CPU、AI 相关 SoC 芯片架构</li>
+              <li>die-to-die、chip-to-chip 互连</li>
+              <li>scale-up / scale-out 与系统控制</li>
+              <li>3D / 2.5D AI 架构</li>
+              <li>产品规划、架构迭代，以及芯片竞争力、scale-up 规模竞争力分析</li>
+              <li>拆解芯片开发需求，以及 IP 规格与 <abbr title="性能、功耗与面积">PPA</abbr> 规格</li>
+            </ul>
+          </article>
+          <article class="cap">
+            <h3>电源、功耗与热</h3>
+            <ul>
+              <li>芯片功耗管理与热控制</li>
+              <li>电源完整性（<abbr title="电源完整性（Power Integrity）">PI</abbr>）防御</li>
+              <li><abbr title="自适应电压调节（Adaptive Voltage Scaling）">AVS</abbr>、<abbr title="动态电压与频率调节（Dynamic Voltage and Frequency Scaling）">DVFS</abbr> 与电源系统架构</li>
+              <li>集群电源与能耗管控</li>
+              <li>集群 token/W 等能效定义与优化</li>
+              <li>从架构到软件的端到端能效达成</li>
+              <li>量产 <abbr title="自适应电压调节">AVS</abbr> 分析，以及 <abbr title="电源完整性">PI</abbr> 与热分析签核</li>
+            </ul>
+          </article>
+          <article class="cap">
+            <h3>方法学、工具与交付</h3>
+            <ul>
+              <li>能效领域的技术规划、先进技术、<abbr title="电子设计自动化">EDA</abbr> 演进与 sign-off 流程</li>
+              <li><abbr title="电子设计自动化">EDA</abbr> 与 <abbr title="硬件仿真（Emulation）">EMU</abbr> 功耗工具平台</li>
+              <li><abbr title="性能、功耗与面积">PPA</abbr> 评价体系与优化方法学</li>
+              <li>Power Analysis Flow（功耗分析流程）的建立</li>
+              <li>架构探索、<abbr title="性能、功耗与面积">PPA</abbr> 分析与跨领域 <abbr title="设计-工艺协同优化">DTCO</abbr></li>
+              <li>里程碑与交付件定义、<abbr title="集成产品开发（Integrated Product Development）">IPD</abbr> 流程适配、架构交付质量管控</li>
+              <li>从微架构到布局布线（<abbr title="布局布线（Place and Route）">PR</abbr>）签核的全流程功耗优化；中端工作涵盖综合、<abbr title="静态时序分析（Static Timing Analysis）">STA</abbr>、<abbr title="时钟域交叉（Clock Domain Crossing）">CDC</abbr>、<abbr title="工程更改（Engineering Change Order）">ECO</abbr></li>
+            </ul>
+          </article>
+          <article class="cap">
+            <h3>全流程覆盖</h3>
+            <ul>
+              <li>产品规划、芯片架构、设计、验证、物理实现、封装、<abbr title="印刷电路板">PCB</abbr></li>
+              <li>芯片开发全流程管理与端到端交付</li>
+              <li>推动 AI Native 转型，改善架构探索、<abbr title="性能、功耗与面积">PPA</abbr> 分析与跨领域 <abbr title="设计-工艺协同优化">DTCO</abbr> 的效率</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="block" id="experience" aria-labelledby="exp-title">
+        <h2 id="exp-title">工作经历</h2>
+        <div class="jobs">
+
+          <article class="job" id="job-damo">
+            <header class="job-head">
+              <div>
+                <h3>阿里巴巴达摩院 · 计算技术</h3>
+                <p class="job-role">芯片架构</p>
+              </div>
+              <p class="job-dates">2024/12 – 至今</p>
+            </header>
+            <div class="project">
+              <h4>3D/2.5D AI 推理芯片项目</h4>
+
+              <div class="duty">
+                <p class="duty-title">芯片和集群电源、功耗、热领域架构负责人</p>
+                <ul>
+                  <li>负责芯片功耗管理，热控制，<abbr title="电源完整性（Power Integrity）">PI</abbr> 防御，<abbr title="自适应电压调节">AVS</abbr>，<abbr title="动态电压与频率调节">DVFS</abbr>，电源等系统架构方案</li>
+                  <li>负责集群电源，能耗管控方案</li>
+                  <li>负责相关领域的 <abbr title="电子设计自动化">EDA</abbr> 工具、流程、优化方法学</li>
+                  <li>负责集群 token/W 等能效定义与优化</li>
+                </ul>
+              </div>
+
+              <div class="duty">
+                <p class="duty-title">SoC 芯片架构联合负责人</p>
+                <ul>
+                  <li>拆解芯片开发需求，IP 规格，<abbr title="性能、功耗与面积">PPA</abbr> 规格等</li>
+                  <li>分析 scale-up 规模竞争力、芯片竞争力，规划产品，架构迭代</li>
+                </ul>
+              </div>
+
+              <div class="duty">
+                <p class="duty-title">芯片架构 PM</p>
+                <ul>
+                  <li>里程碑定义，交付件定义，<abbr title="集成产品开发（Integrated Product Development）">IPD</abbr> 流程适配，架构交付质量管控等</li>
+                </ul>
+              </div>
+
+              <div class="duty">
+                <p class="duty-title">芯片架构决策委员会负责人</p>
+              </div>
+              <div class="duty">
+                <p class="duty-title">项目决策委员会成员</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="job" id="job-xuanjie">
+            <header class="job-head">
+              <div>
+                <h3>玄戒技术有限公司</h3>
+                <p class="job-role">SoC 能效架构和交付</p>
+              </div>
+              <p class="job-dates">2022/9 – 2024/12</p>
+            </header>
+            <div class="project">
+              <h4>手机芯片项目</h4>
+              <ul>
+                <li>量产 1 款 3nm 手机芯片</li>
+                <li>负责 SoC 能效目标制定</li>
+                <li>负责 IP 能效迭代优化，并推动目标达成</li>
+                <li>管理 SoC-能效功耗团队</li>
+                <li>担任 SoC 能效架构</li>
+                <li>负责功耗工具平台，包括 <abbr title="电子设计自动化">EDA</abbr> 和 <abbr title="硬件仿真（Emulation）">EMU</abbr></li>
+                <li>负责 <abbr title="性能、功耗与面积">PPA</abbr> 评价体系建立</li>
+                <li>建立 <abbr title="性能、功耗与面积">PPA</abbr> 优化方法学</li>
+                <li>负责 <abbr title="电源完整性">PI</abbr> 和热分析 sign-off</li>
+                <li>承担从架构到软件端到端能效达成责任</li>
+                <li>负责量产 <abbr title="自适应电压调节">AVS</abbr> 分析</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="job" id="job-enflame">
+            <header class="job-head">
+              <div>
+                <h3>燧原科技有限公司</h3>
+                <p class="job-role">AI core power 架构</p>
+              </div>
+              <p class="job-dates">2021/9 – 2022/9</p>
+            </header>
+            <div class="project">
+              <h4>AI 芯片项目</h4>
+              <ul>
+                <li>量产 1 款 7nm AI 芯片</li>
+                <li>负责 SIP（AI Core）<abbr title="性能、功耗与面积">PPA</abbr> 目标达成</li>
+                <li><abbr title="电源管理单元（Power Management Unit）">PMU</abbr>、Arch Clock Gate（架构时钟门控）架构设计和最终交付</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="job" id="job-amd">
+            <header class="job-head">
+              <div>
+                <h3>AMD</h3>
+                <p class="job-role">设计交付</p>
+              </div>
+              <p class="job-dates">2016/9 – 2021/9</p>
+            </header>
+            <div class="project">
+              <h4>AI / DGPU / Mobile 芯片项目</h4>
+              <ul>
+                <li>量产 2 款 7nm AI 芯片、1 款 7nm <abbr title="独立 GPU（Discrete GPU）">DGPU</abbr> 芯片、1 款 7nm mobile 芯片</li>
+                <li>负责 <abbr title="图形处理器 IP">GFXIP</abbr> / <abbr title="PCI Express 高速互连">PCIE</abbr> / <abbr title="I/O 集线器">IOHUB</abbr> / <abbr title="北桥接口（Northbridge Interface）">NBIF</abbr> / DXIO / <abbr title="超短距互连（Ultra Short Reach）">USR</abbr> 的功耗迭代优化</li>
+                <li>负责 Power Analysis Flow 从无到有的建立</li>
+                <li>制定 <abbr title="性能、功耗与面积">PPA</abbr> 评价体系</li>
+                <li>负责微架构到 <abbr title="布局布线（Place and Route）签核">PR sign-off</abbr> 的全流程功耗优化</li>
+              </ul>
+            </div>
+            <div class="project">
+              <h4>Server IOD 项目</h4>
+              <ul>
+                <li>量产 4 款 14nm Server <abbr title="输入输出裸片（I/O Die）">IO Die</abbr> 芯片</li>
+                <li>负责 <abbr title="PCI Express 高速互连">PCIE</abbr> / <abbr title="I/O 集线器">IOHUB</abbr> / <abbr title="北桥接口">NBIF</abbr> / DXIO 的功耗分析</li>
+                <li>负责中端（综合、<abbr title="静态时序分析">STA</abbr>、<abbr title="时钟域交叉">CDC</abbr>、<abbr title="工程更改">ECO</abbr> 等）工作</li>
+              </ul>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      <section class="block" id="education" aria-labelledby="edu-title">
+        <h2 id="edu-title">教育背景</h2>
+        <div class="schools">
+          <article class="school">
+            <h3>香港科技大学</h3>
+            <p class="degree">研究生 · 集成电路设计</p>
+            <p class="dates">2015/8 – 2016/12</p>
+          </article>
+          <article class="school">
+            <h3>西北工业大学</h3>
+            <p class="degree">本科 · 信息安全</p>
+            <p class="dates">2010/9 – 2014/7</p>
+          </article>
+        </div>
+      </section>
+    </section>
+  </main>
+
+
+  <script>
+
+(function () {
+  var body = document.body;
+  var ABOUT_IDS = {
+    about: 1, intro: 1, focus: 1, experience: 1, education: 1,
+    "job-damo": 1, "job-xuanjie": 1, "job-enflame": 1, "job-amd": 1
+  };
+
+  function currentHash() {
+    return (location.hash || "#home").replace(/^#/, "") || "home";
+  }
+
+  function viewFor(id) {
+    return ABOUT_IDS[id] ? "about" : "home";
+  }
+
+  function syncNav(view) {
+    document.querySelectorAll("nav.site-nav a[data-view]").forEach(function (a) {
+      var on = a.getAttribute("data-view") === view;
+      if (on) a.setAttribute("aria-current", "page");
+      else a.removeAttribute("aria-current");
+    });
+  }
+
+  function applyRoute(opts) {
+    var id = currentHash();
+    if (id !== "home" && id !== "about" && !ABOUT_IDS[id] && id) {
+      id = "home";
+    }
+    var view = viewFor(id) || "home";
+    if (id === "home" || !id) view = "home";
+    body.setAttribute("data-view", view);
+    syncNav(view);
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (opts && opts.skipScroll) return;
+    if (view === "about" && id && id !== "about" && ABOUT_IDS[id]) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+        return;
+      }
+    }
+    window.scrollTo(0, 0);
+  }
+
+  body.classList.add("js-ready");
+  if (!location.hash) {
+    history.replaceState(null, "", "#home");
+  }
+  applyRoute({ skipScroll: true });
+
+  window.addEventListener("hashchange", function () {
+    applyRoute();
+  });
+
+  var btn = document.getElementById("theme-toggle");
+  if (!btn) return;
+  function currentTheme() {
+    var explicit = document.documentElement.getAttribute("data-theme");
+    if (explicit === "light" || explicit === "dark") return explicit;
+    return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  }
+  function syncThemeButton() {
+    var t = currentTheme();
+    btn.setAttribute("aria-label", t === "dark" ? "切换为浅色主题" : "切换为深色主题");
+    btn.setAttribute("title", t === "dark" ? "切换为浅色主题" : "切换为深色主题");
+    btn.setAttribute("aria-pressed", t === "dark" ? "true" : "false");
+  }
+  btn.addEventListener("click", function () {
+    var next = currentTheme() === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("bowen-site-theme", next); } catch (e) {}
+    syncThemeButton();
+  });
+  syncThemeButton();
+})();
+
+  </script>
+</body>
+</html>
