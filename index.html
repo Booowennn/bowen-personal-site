@@ -883,6 +883,8 @@ footer.site p { margin: 0; }
 }
 
   :root { --header-h: 0rem; }
+  .contact-details { display: flex; flex-direction: column; align-items: flex-start; gap: .55rem; margin-top: 1.4rem; color: var(--ink-muted); font-size: .95rem; }
+  .contact-details a { overflow-wrap: anywhere; }
   </style>
   <script>
 
@@ -906,6 +908,10 @@ footer.site p { margin: 0; }
       <div class="hero-copy">
         <h1>杨博文</h1>
         <p class="role">达摩院 芯片架构</p>
+        <div class="contact-details" aria-label="联系方式">
+          <a href="tel:18616367073">18616367073</a>
+          <a href="mailto:bowen.yang3@qq.com">bowen.yang3@qq.com</a>
+        </div>
         <div class="hero-actions">
           <a class="btn" href="#about">关于我
             <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
