@@ -885,6 +885,107 @@ footer.site p { margin: 0; }
   :root { --header-h: 0rem; }
   .contact-details { display: flex; flex-direction: column; align-items: flex-start; gap: .55rem; margin-top: 1.4rem; color: var(--ink-muted); font-size: .95rem; }
   .contact-details a { overflow-wrap: anywhere; }
+
+/* About typography and grouping (resume layout). */
+.back-to-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 1.05rem;
+  color: var(--ink-muted);
+  text-decoration: none;
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+}
+.back-to-card:hover { color: var(--accent); }
+.about-page > .about-top h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4.5vw, 2.8rem);
+  letter-spacing: 0.08em;
+  font-weight: 650;
+  line-height: 1.2;
+}
+.edu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.edu-item {
+  display: grid;
+  grid-template-columns: 12.2rem minmax(0, 1fr);
+  gap: 0.35rem 1.5rem;
+  align-items: baseline;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.05rem 1.25rem;
+}
+.edu-dates {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.edu-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.15rem;
+  align-items: baseline;
+}
+.edu-school {
+  font-weight: 650;
+  font-size: 1.02rem;
+}
+.edu-meta {
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+}
+.resume-list {
+  margin: 0;
+  padding: 0 0 0 1.15rem;
+  max-width: 48rem;
+}
+.resume-list li {
+  margin: 0.45rem 0;
+  color: var(--ink-muted);
+  line-height: 1.75;
+}
+.resume-list li::marker { color: var(--accent); }
+.resume-list.tight { max-width: none; }
+.resume-list.tight li { margin: 0.28rem 0; }
+.resume-sub {
+  margin: 0.35rem 0 0;
+  padding: 0 0 0 1.15rem;
+}
+.resume-sub li {
+  margin: 0.22rem 0;
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+}
+.resume-sub li::marker { color: var(--accent); }
+.job-head {
+  display: grid;
+  gap: 0.3rem;
+  align-items: baseline;
+  margin-bottom: 1rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+.job-meta {
+  margin: 0;
+  color: var(--ink-faint);
+  font-size: 0.9rem;
+}
+@media (max-width: 880px) {
+  .edu-item {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+}
+
   </style>
   <script>
 
@@ -970,113 +1071,73 @@ footer.site p { margin: 0; }
     </section>
 
     <section id="about" class="view about-page wrap" aria-label="关于我">
-      <div class="intro" id="intro">
-        <p class="kicker">About</p>
+      <div class="about-top">
+        <a class="back-to-card" href="#home">返回名片</a>
         <h1>关于我</h1>
         <ul class="toc">
-          <li><a href="#intro">简介</a></li>
-          <li><a href="#focus">专业方向</a></li>
-          <li><a href="#experience">工作经历</a></li>
           <li><a href="#education">教育背景</a></li>
+          <li><a href="#intro">简介</a></li>
+          <li><a href="#experience">工作经验</a></li>
         </ul>
-        <div class="intro-body">
-          <p>聚焦 GPU、CPU、AI 相关 SoC 芯片架构，覆盖 die-to-die、chip-to-chip、scale-up / scale-out、系统控制，以及 3D AI 架构、推理模型能效优化与集群部署。</p>
-          <p>管理芯片开发全流程，负责端到端交付，范围涵盖产品规划、芯片架构、设计、验证、物理实现、封装与 <abbr title="印刷电路板（Printed Circuit Board）">PCB</abbr>。</p>
-          <p>聚焦能效相关领域的技术规划、先进技术、<abbr title="电子设计自动化（Electronic Design Automation）">EDA</abbr> 演进与签核（sign-off）流程。</p>
-          <p>推动 AI Native 转型，提升架构探索、<abbr title="性能、功耗与面积（Performance, Power, Area）">PPA</abbr> 分析和跨领域 <abbr title="设计-工艺协同优化（Design-Technology Co-Optimization）">DTCO</abbr> 优化效率。</p>
-        </div>
       </div>
 
-      <section class="block" id="focus" aria-labelledby="focus-title">
-        <h2 id="focus-title">专业方向</h2>
-        <p class="block-lead">以下方向整理自履历所载工作，用于概括长期关注的问题，并不表示每一项都出现在同一项目中。</p>
-        <div class="caps">
-          <article class="cap">
-            <h3>系统与 SoC 架构</h3>
-            <ul>
-              <li>GPU、CPU、AI 相关 SoC 芯片架构</li>
-              <li>die-to-die、chip-to-chip 互连</li>
-              <li>scale-up / scale-out 与系统控制</li>
-              <li>3D / 2.5D AI 架构</li>
-              <li>产品规划、架构迭代，以及芯片竞争力、scale-up 规模竞争力分析</li>
-              <li>拆解芯片开发需求，以及 IP 规格与 <abbr title="性能、功耗与面积">PPA</abbr> 规格</li>
-            </ul>
-          </article>
-          <article class="cap">
-            <h3>电源、功耗与热</h3>
-            <ul>
-              <li>芯片功耗管理与热控制</li>
-              <li>电源完整性（<abbr title="电源完整性（Power Integrity）">PI</abbr>）防御</li>
-              <li><abbr title="自适应电压调节（Adaptive Voltage Scaling）">AVS</abbr>、<abbr title="动态电压与频率调节（Dynamic Voltage and Frequency Scaling）">DVFS</abbr> 与电源系统架构</li>
-              <li>集群电源与能耗管控</li>
-              <li>集群 token/W 等能效定义与优化</li>
-              <li>从架构到软件的端到端能效达成</li>
-              <li>量产 <abbr title="自适应电压调节">AVS</abbr> 分析，以及 <abbr title="电源完整性">PI</abbr> 与热分析签核</li>
-            </ul>
-          </article>
-          <article class="cap">
-            <h3>方法学、工具与交付</h3>
-            <ul>
-              <li>能效领域的技术规划、先进技术、<abbr title="电子设计自动化">EDA</abbr> 演进与 sign-off 流程</li>
-              <li><abbr title="电子设计自动化">EDA</abbr> 与 <abbr title="硬件仿真（Emulation）">EMU</abbr> 功耗工具平台</li>
-              <li><abbr title="性能、功耗与面积">PPA</abbr> 评价体系与优化方法学</li>
-              <li>Power Analysis Flow（功耗分析流程）的建立</li>
-              <li>架构探索、<abbr title="性能、功耗与面积">PPA</abbr> 分析与跨领域 <abbr title="设计-工艺协同优化">DTCO</abbr></li>
-              <li>里程碑与交付件定义、<abbr title="集成产品开发（Integrated Product Development）">IPD</abbr> 流程适配、架构交付质量管控</li>
-              <li>从微架构到布局布线（<abbr title="布局布线（Place and Route）">PR</abbr>）签核的全流程功耗优化；中端工作涵盖综合、<abbr title="静态时序分析（Static Timing Analysis）">STA</abbr>、<abbr title="时钟域交叉（Clock Domain Crossing）">CDC</abbr>、<abbr title="工程更改（Engineering Change Order）">ECO</abbr></li>
-            </ul>
-          </article>
-          <article class="cap">
-            <h3>全流程覆盖</h3>
-            <ul>
-              <li>产品规划、芯片架构、设计、验证、物理实现、封装、<abbr title="印刷电路板">PCB</abbr></li>
-              <li>芯片开发全流程管理与端到端交付</li>
-              <li>推动 AI Native 转型，改善架构探索、<abbr title="性能、功耗与面积">PPA</abbr> 分析与跨领域 <abbr title="设计-工艺协同优化">DTCO</abbr> 的效率</li>
-            </ul>
-          </article>
-        </div>
+      <section class="block" id="education" aria-labelledby="edu-title">
+        <h2 id="edu-title">教育背景</h2>
+        <ul class="edu-list">
+          <li class="edu-item">
+            <span class="edu-dates">2015/8 – 2016/12</span>
+            <span class="edu-body"><span class="edu-school">香港科技大学</span><span class="edu-meta">研究生</span><span class="edu-meta">集成电路设计</span></span>
+          </li>
+          <li class="edu-item">
+            <span class="edu-dates">2010/9 – 2014/7</span>
+            <span class="edu-body"><span class="edu-school">西北工业大学</span><span class="edu-meta">本科</span><span class="edu-meta">信息安全</span></span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="block" id="intro" aria-labelledby="intro-title">
+        <h2 id="intro-title">简介</h2>
+        <ul class="resume-list">
+          <li>聚焦 GPU、CPU、AI相关 SOC 芯片架构，覆盖 die-to-die、chip-to-chip、scale-up / scale-out、系统控制，3D AI架构以及推理模型能效优化与集群部署</li>
+          <li>管理芯片开发全流程，端到端交付，涵盖产品规划、芯片架构、设计、验证、物理实现、封装、PCB</li>
+          <li>聚焦能效相关领域的技术规划、先进技术、EDA 演进与 sign-off 流程</li>
+          <li>推动 AI Native 转型，提升架构探索、PPA 分析和跨领域 DTCO 优化效率</li>
+        </ul>
       </section>
 
       <section class="block" id="experience" aria-labelledby="exp-title">
-        <h2 id="exp-title">工作经历</h2>
+        <h2 id="exp-title">工作经验</h2>
         <div class="jobs">
 
           <article class="job" id="job-damo">
             <header class="job-head">
-              <div>
-                <h3>阿里巴巴达摩院 · 计算技术</h3>
-                <p class="job-role">芯片架构</p>
-              </div>
-              <p class="job-dates">2024/12 – 至今</p>
+              <h3>阿里巴巴达摩院 · 计算技术</h3>
+              <p class="job-meta">2024/12 – 至今 · 芯片架构</p>
             </header>
             <div class="project">
               <h4>3D/2.5D AI 推理芯片项目</h4>
-
               <div class="duty">
                 <p class="duty-title">芯片和集群电源、功耗、热领域架构负责人</p>
-                <ul>
-                  <li>负责芯片功耗管理，热控制，<abbr title="电源完整性（Power Integrity）">PI</abbr> 防御，<abbr title="自适应电压调节">AVS</abbr>，<abbr title="动态电压与频率调节">DVFS</abbr>，电源等系统架构方案</li>
+                <ul class="resume-sub">
+                  <li>负责芯片功耗管理，热控制，PI防御，AVS，DVFS，电源等系统架构方案</li>
                   <li>负责集群电源，能耗管控方案</li>
-                  <li>负责相关领域的 <abbr title="电子设计自动化">EDA</abbr> 工具、流程、优化方法学</li>
-                  <li>负责集群 token/W 等能效定义与优化</li>
+                  <li>负责相关领域的EDA工具，流程，优化方法学</li>
+                  <li>负责集群token/W等能效定义，优化</li>
                 </ul>
               </div>
-
               <div class="duty">
-                <p class="duty-title">SoC 芯片架构联合负责人</p>
-                <ul>
-                  <li>拆解芯片开发需求，IP 规格，<abbr title="性能、功耗与面积">PPA</abbr> 规格等</li>
-                  <li>分析 scale-up 规模竞争力、芯片竞争力，规划产品，架构迭代</li>
+                <p class="duty-title">SOC 芯片架构联合负责人</p>
+                <ul class="resume-sub">
+                  <li>拆解芯片开发需求，IP规格，PPA规格等</li>
+                  <li>分析scale-up规模竞争力，芯片竞争力，规划产品，架构迭代</li>
                 </ul>
               </div>
-
               <div class="duty">
                 <p class="duty-title">芯片架构 PM</p>
-                <ul>
-                  <li>里程碑定义，交付件定义，<abbr title="集成产品开发（Integrated Product Development）">IPD</abbr> 流程适配，架构交付质量管控等</li>
+                <ul class="resume-sub">
+                  <li>里程碑定义，交付件定义，IPD流程适配，架构交付质量管控等</li>
                 </ul>
               </div>
-
               <div class="duty">
                 <p class="duty-title">芯片架构决策委员会负责人</p>
               </div>
@@ -1088,92 +1149,67 @@ footer.site p { margin: 0; }
 
           <article class="job" id="job-xuanjie">
             <header class="job-head">
-              <div>
-                <h3>玄戒技术有限公司</h3>
-                <p class="job-role">SoC 能效架构和交付</p>
-              </div>
-              <p class="job-dates">2022/9 – 2024/12</p>
+              <h3>玄戒技术有限公司</h3>
+              <p class="job-meta">2022/9 – 2024/12 · SOC能效架构和交付</p>
             </header>
             <div class="project">
               <h4>手机芯片项目</h4>
-              <ul>
+              <ul class="resume-list tight">
                 <li>量产 1 款 3nm 手机芯片</li>
-                <li>负责 SoC 能效目标制定</li>
+                <li>负责 SOC 能效目标制定</li>
                 <li>负责 IP 能效迭代优化，并推动目标达成</li>
-                <li>管理 SoC-能效功耗团队</li>
-                <li>担任 SoC 能效架构</li>
-                <li>负责功耗工具平台，包括 <abbr title="电子设计自动化">EDA</abbr> 和 <abbr title="硬件仿真（Emulation）">EMU</abbr></li>
-                <li>负责 <abbr title="性能、功耗与面积">PPA</abbr> 评价体系建立</li>
-                <li>建立 <abbr title="性能、功耗与面积">PPA</abbr> 优化方法学</li>
-                <li>负责 <abbr title="电源完整性">PI</abbr> 和热分析 sign-off</li>
+                <li>管理 SOC-能效功耗团队</li>
+                <li>担任 SOC 能效架构</li>
+                <li>负责功耗工具平台，包括 EDA 和 EMU</li>
+                <li>负责 PPA 评价体系建立</li>
+                <li>建立 PPA 优化方法学</li>
+                <li>负责 PI 和热分析 sign-off</li>
                 <li>承担从架构到软件端到端能效达成责任</li>
-                <li>负责量产 <abbr title="自适应电压调节">AVS</abbr> 分析</li>
+                <li>负责量产 AVS 分析</li>
               </ul>
             </div>
           </article>
 
           <article class="job" id="job-enflame">
             <header class="job-head">
-              <div>
-                <h3>燧原科技有限公司</h3>
-                <p class="job-role">AI core power 架构</p>
-              </div>
-              <p class="job-dates">2021/9 – 2022/9</p>
+              <h3>燧原科技有限公司</h3>
+              <p class="job-meta">2021/9 – 2022/9 · AI core power架构</p>
             </header>
             <div class="project">
               <h4>AI 芯片项目</h4>
-              <ul>
+              <ul class="resume-list tight">
                 <li>量产 1 款 7nm AI 芯片</li>
-                <li>负责 SIP（AI Core）<abbr title="性能、功耗与面积">PPA</abbr> 目标达成</li>
-                <li><abbr title="电源管理单元（Power Management Unit）">PMU</abbr>、Arch Clock Gate（架构时钟门控）架构设计和最终交付</li>
+                <li>负责 SIP (AI Core) PPA 目标达成</li>
+                <li>PMU、Arch Clock Gate 架构设计和最终交付</li>
               </ul>
             </div>
           </article>
 
           <article class="job" id="job-amd">
             <header class="job-head">
-              <div>
-                <h3>AMD</h3>
-                <p class="job-role">设计交付</p>
-              </div>
-              <p class="job-dates">2016/9 – 2021/9</p>
+              <h3>AMD</h3>
+              <p class="job-meta">2016/9 – 2021/9 · 设计交付</p>
             </header>
             <div class="project">
               <h4>AI / DGPU / Mobile 芯片项目</h4>
-              <ul>
-                <li>量产 2 款 7nm AI 芯片、1 款 7nm <abbr title="独立 GPU（Discrete GPU）">DGPU</abbr> 芯片、1 款 7nm mobile 芯片</li>
-                <li>负责 <abbr title="图形处理器 IP">GFXIP</abbr> / <abbr title="PCI Express 高速互连">PCIE</abbr> / <abbr title="I/O 集线器">IOHUB</abbr> / <abbr title="北桥接口（Northbridge Interface）">NBIF</abbr> / DXIO / <abbr title="超短距互连（Ultra Short Reach）">USR</abbr> 的功耗迭代优化</li>
+              <ul class="resume-list tight">
+                <li>量产 2 款 7nm AI 芯片、1 款 7nm DGPU 芯片、1 款 7nm mobile 芯片</li>
+                <li>负责 GFXIP / PCIE / IOHUB / NBIF / DXIO / USR 的功耗迭代优化</li>
                 <li>负责 Power Analysis Flow 从无到有的建立</li>
-                <li>制定 <abbr title="性能、功耗与面积">PPA</abbr> 评价体系</li>
-                <li>负责微架构到 <abbr title="布局布线（Place and Route）签核">PR sign-off</abbr> 的全流程功耗优化</li>
+                <li>制定 PPA 评价体系</li>
+                <li>负责微架构到 PR sign-off 的全流程功耗优化</li>
               </ul>
             </div>
             <div class="project">
               <h4>Server IOD 项目</h4>
-              <ul>
-                <li>量产 4 款 14nm Server <abbr title="输入输出裸片（I/O Die）">IO Die</abbr> 芯片</li>
-                <li>负责 <abbr title="PCI Express 高速互连">PCIE</abbr> / <abbr title="I/O 集线器">IOHUB</abbr> / <abbr title="北桥接口">NBIF</abbr> / DXIO 的功耗分析</li>
-                <li>负责中端（综合、<abbr title="静态时序分析">STA</abbr>、<abbr title="时钟域交叉">CDC</abbr>、<abbr title="工程更改">ECO</abbr> 等）工作</li>
+              <ul class="resume-list tight">
+                <li>量产 4 款 14nm Server IO Die 芯片</li>
+                <li>负责 PCIE / IOHUB / NBIF / DXIO 的功耗分析</li>
+                <li>负责中端（综合、STA、CDC、ECO 等）工作</li>
               </ul>
             </div>
           </article>
 
-        </div>
-      </section>
-
-      <section class="block" id="education" aria-labelledby="edu-title">
-        <h2 id="edu-title">教育背景</h2>
-        <div class="schools">
-          <article class="school">
-            <h3>香港科技大学</h3>
-            <p class="degree">研究生 · 集成电路设计</p>
-            <p class="dates">2015/8 – 2016/12</p>
-          </article>
-          <article class="school">
-            <h3>西北工业大学</h3>
-            <p class="degree">本科 · 信息安全</p>
-            <p class="dates">2010/9 – 2014/7</p>
-          </article>
         </div>
       </section>
     </section>
@@ -1185,7 +1221,7 @@ footer.site p { margin: 0; }
 (function () {
   var body = document.body;
   var ABOUT_IDS = {
-    about: 1, intro: 1, focus: 1, experience: 1, education: 1,
+    about: 1, intro: 1, experience: 1, education: 1,
     "job-damo": 1, "job-xuanjie": 1, "job-enflame": 1, "job-amd": 1
   };
 
