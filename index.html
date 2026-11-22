@@ -1030,6 +1030,18 @@ footer.site p { margin: 0; }
   }
 }
 
+/* Tighten space between About TOC and the first content section only. */
+.about-page > .about-top + .block {
+  margin-top: 1.35rem;
+  padding-top: 1.35rem;
+}
+@media (max-width: 880px) {
+  .about-page > .about-top + .block {
+    margin-top: 1.15rem;
+    padding-top: 1.15rem;
+  }
+}
+
   </style>
   <script>
 
@@ -1118,7 +1130,7 @@ footer.site p { margin: 0; }
     <section id="about" class="view about-page wrap" aria-label="关于我">
       <div class="about-top">
         <a class="back-to-card" href="#home">返回名片</a>
-        <h1>关于我</h1>
+        <h1>杨博文</h1>
         <ul class="toc">
           <li><a href="#education">教育背景</a></li>
           <li><a href="#intro">简介</a></li>
