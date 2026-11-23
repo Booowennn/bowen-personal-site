@@ -438,10 +438,13 @@ body.js-ready[data-view="about"] #about { display: block; }
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
+  gap: 0.6rem;
   margin-top: 1.5rem;
 }
-.hero-actions .btn {
+.hero-actions .btn,
+.hero-actions .btn-ghost {
   margin-right: 0;
+  margin-left: 0;
 }
 
 .btn {
@@ -1060,7 +1063,11 @@ footer.site p { margin: 0; }
   margin-top: var(--space-block);
   gap: 0.4rem;
 }
-.hero-actions { margin-top: var(--space-block); }
+.hero-actions {
+  margin-top: var(--space-block);
+  gap: 0.6rem;
+  justify-content: flex-end;
+}
 
 .about-page {
   padding-block: clamp(1.5rem, 3.5vh, 2.25rem) 2.5rem;
@@ -1179,6 +1186,9 @@ a[x-apple-data-detectors]:not([href^="mailto:"]) {
         </div>
         <div class="hero-actions">
           <a class="btn" href="#about">关于我
+            <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="articles/">技术文章
             <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
           </a>
         </div>
