@@ -34,6 +34,7 @@
   --space-section: 1.5rem;
   --space-section-pad: 1.25rem;
   --btn-font-size: 0.92rem;
+  --tag-font-size: 0.78rem;
   --font: "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans SC",
           "Microsoft YaHei UI", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
   --mono: "SF Mono", "JetBrains Mono", "Cascadia Code", "Sarasa Mono SC", ui-monospace, monospace;
@@ -398,7 +399,7 @@ body.js-ready[data-view="about"] #about { display: block; }
   border: 1px solid var(--line-strong);
   background: var(--accent-dim);
   color: var(--ink);
-  font-size: 0.78rem;
+  font-size: var(--tag-font-size);
   letter-spacing: 0.04em;
   padding: 0.28rem 0.7rem;
   border-radius: 999px;
@@ -450,22 +451,13 @@ body.js-ready[data-view="about"] #about { display: block; }
   margin-left: 0;
 }
 .hero-thoughts {
-  display: inline-flex;
-  align-items: center;
-  font-size: calc(var(--btn-font-size) * 0.5);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  line-height: 1.5;
-  color: var(--ink-muted);
-  text-decoration: none;
-  background: none;
-  border: 0;
-  border-radius: 0;
-  padding: 0.4rem 0.1rem;
+  font-size: var(--tag-font-size);
+  padding: 0.5rem 0.95rem;
+  gap: 0.45rem;
 }
-.hero-thoughts:hover {
-  color: var(--accent);
-  text-decoration: none;
+.hero-thoughts .arrow {
+  width: 0.8rem;
+  height: 0.8rem;
 }
 
 .btn {
@@ -1217,7 +1209,9 @@ a[x-apple-data-detectors]:not([href^="mailto:"]) {
           <a class="btn" href="#about">关于我
             <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
           </a>
-          <a class="hero-thoughts" href="articles/">一些思考</a>
+          <a class="btn btn-ghost hero-thoughts" href="articles/">一些思考
+            <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </a>
         </div>
       </div>
       <div class="hero-visual" aria-hidden="true">
