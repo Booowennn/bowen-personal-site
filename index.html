@@ -398,7 +398,6 @@ body.js-ready[data-view="about"] #about { display: block; }
 .tags li,
 .hero-thoughts {
   border: 1px solid var(--line-strong);
-  background: var(--accent-dim);
   color: var(--ink);
   font-size: var(--tag-font-size);
   font-weight: inherit;
@@ -407,15 +406,22 @@ body.js-ready[data-view="about"] #about { display: block; }
   padding: 0.28rem 0.7rem;
   border-radius: 999px;
 }
+.tags li {
+  background: var(--accent-dim);
+}
 .hero-thoughts {
   display: inline-flex;
   align-items: center;
   width: max-content;
   text-decoration: none;
+  background: transparent;
 }
-.hero-thoughts:hover {
+.hero-thoughts:hover,
+.hero-thoughts:focus,
+.hero-thoughts:active {
   color: var(--accent);
   text-decoration: none;
+  background: transparent;
 }
 
 .meta-grid {
