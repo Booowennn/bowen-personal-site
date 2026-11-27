@@ -1,14 +1,14 @@
 /* Shared styles for the articles directory and article pages.
    Tokens and type match the personal card site. */
 :root {
-  --bg: #0c0d0f;
-  --bg-elev: #14161a;
-  --bg-soft: #1b1e24;
-  --ink: #f2eee6;
-  --ink-muted: #9a958c;
-  --ink-faint: #6d6a64;
-  --line: rgba(242, 238, 230, 0.10);
-  --line-strong: rgba(242, 238, 230, 0.18);
+  --bg: #000000;
+  --bg-elev: #111111;
+  --bg-soft: #1a1a1a;
+  --ink: #ffffff;
+  --ink-muted: #a3a3a3;
+  --ink-faint: #737373;
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.22);
   --accent: #c9a66b;
   --accent-ink: #0c0d0f;
   --accent-dim: rgba(201, 166, 107, 0.14);
@@ -27,14 +27,14 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    --bg: #f3f0ea;
-    --bg-elev: #fffcf7;
-    --bg-soft: #eae5db;
-    --ink: #1b1916;
-    --ink-muted: #5c5850;
-    --ink-faint: #8a857c;
-    --line: rgba(27, 25, 22, 0.10);
-    --line-strong: rgba(27, 25, 22, 0.16);
+    --bg: #ffffff;
+    --bg-elev: #ffffff;
+    --bg-soft: #f2f2f2;
+    --ink: #111111;
+    --ink-muted: #555555;
+    --ink-faint: #888888;
+    --line: rgba(0, 0, 0, 0.12);
+    --line-strong: rgba(0, 0, 0, 0.22);
     --accent: #7a5a2c;
     --accent-ink: #fffcf7;
     --accent-dim: rgba(122, 90, 44, 0.12);
@@ -131,7 +131,7 @@ a[x-apple-data-detectors]:not([href^="mailto:"]) {
 .filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem 0.35rem;
+  gap: 0.45rem 1.15rem;
   margin: var(--space-title) 0 0;
   padding: 0;
   list-style: none;
@@ -140,27 +140,41 @@ a[x-apple-data-detectors]:not([href^="mailto:"]) {
 .filters a,
 .filters span {
   color: var(--ink-muted);
-  text-decoration: none;
   font-size: 0.85rem;
-  padding: 0.2rem 0.7rem;
-  border-radius: 999px;
-  border: 1px solid transparent;
+  padding: 0.1rem 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.28em;
+  text-decoration-color: color-mix(in srgb, var(--ink-muted) 50%, transparent);
 }
-.filters a:hover {
-  color: var(--accent);
-  background: var(--accent-dim);
+.filters a:hover,
+.filters a:focus-visible {
+  color: var(--ink);
+  background: none;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: currentColor;
 }
 .filters a[aria-current="page"] {
   color: var(--ink);
-  border-color: var(--line-strong);
-  background: var(--accent-dim);
+  background: none;
+  border: 0;
+  font-weight: 600;
+  text-decoration-thickness: 2px;
+  text-decoration-color: currentColor;
 }
 .filters span[aria-disabled="true"] {
   color: var(--ink-faint);
   cursor: default;
   pointer-events: none;
   user-select: none;
-  background: transparent;
+  background: none;
+  text-decoration: underline dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.28em;
+  text-decoration-color: color-mix(in srgb, var(--ink-faint) 70%, transparent);
 }
 
 .article-list {
