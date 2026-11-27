@@ -137,7 +137,8 @@ a[x-apple-data-detectors]:not([href^="mailto:"]) {
   list-style: none;
 }
 
-.filters a {
+.filters a,
+.filters span {
   color: var(--ink-muted);
   text-decoration: none;
   font-size: 0.85rem;
@@ -153,6 +154,13 @@ a[x-apple-data-detectors]:not([href^="mailto:"]) {
   color: var(--ink);
   border-color: var(--line-strong);
   background: var(--accent-dim);
+}
+.filters span[aria-disabled="true"] {
+  color: var(--ink-faint);
+  cursor: default;
+  pointer-events: none;
+  user-select: none;
+  background: transparent;
 }
 
 .article-list {
